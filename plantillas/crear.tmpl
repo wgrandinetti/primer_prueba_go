@@ -1,0 +1,27 @@
+{{define "crear"}}
+{{template "cabecera"}}
+
+<div class="card">
+    <div class="card-header">
+        Actores
+    </div>
+    <div class="card-body">
+        <form method="post" action="/actores">
+            <div class="form-group">
+              <label for="">Nombre:</label>
+              <input type="text"
+                class="form-control" name="" id="" aria-describedby="helpId" placeholder="">
+              <small id="helpId" class="form-text text-muted">Help text</small>
+            </div>
+            <div class="form-group">
+              <label for="">Edad</label>
+              <input type="text" class="form-control" name="" id="" aria-describedby="helpId" placeholder="">
+              <small id="helpId" class="form-text text-muted">Help text</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Actor</button>
+        </form>
+    </div>
+</div>
+
+{{template "pie"}}
+{{end}}
