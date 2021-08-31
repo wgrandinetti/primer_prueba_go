@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var plantillas = template.Must(template.ParseGlob("plantillas/*"))
