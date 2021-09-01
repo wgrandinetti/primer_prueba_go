@@ -1,12 +1,24 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"text/template"
 
 	_ "github.com/mattn/go-sqlite3"
 )
+
+func conexionBD() (conexion *sql.DB) {
+	Driver := "sqlite3"
+	database := "db/hoard.db"
+
+	conexion, err := sql.Open(Driver, database)
+	if err != nil {
+		panic(err.Error())
+	}
+	return conexion
+}
 
 var plantillas = template.Must(template.ParseGlob("plantillas/*"))
 
@@ -20,6 +32,13 @@ func main() {
 
 func Inicio(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "Hola mundo.")
+	conexionEstablecida := conexionBD()
+	insertarRegistros, err := conexionEstablecida.Prepare("INSERT INTO actores(nombre,edad) VALUES ('John',34)")
+	if err != nil {
+		panic(err.Error())
+	}
+	insertarRegistros.Exec()
+
 	plantillas.ExecuteTemplate(w, "inicio", nil)
 }
 
