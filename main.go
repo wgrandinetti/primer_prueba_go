@@ -24,25 +24,70 @@ var plantillas = template.Must(template.ParseGlob("plantillas/*"))
 
 func main() {
 	http.HandleFunc("/", Inicio)
-	http.HandleFunc("/actor", Actor)
+	http.HandleFunc("/actor", Actores)
+	http.HandleFunc("/insertar", Insertar)
 
 	log.Println("Servidor corriendo.")
 	http.ListenAndServe(":8081", nil)
 }
 
+type Actor struct {
+	id     int
+	nombre string
+	edad   int
+}
+
 func Inicio(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "Hola mundo.")
 	conexionEstablecida := conexionBD()
-	insertarRegistros, err := conexionEstablecida.Prepare("INSERT INTO actores(nombre,edad) VALUES ('John',34)")
+	registros, err := conexionEstablecida.Query("SELECT * FROM actores")
 	if err != nil {
 		panic(err.Error())
 	}
-	insertarRegistros.Exec()
+	actor := Actor{}
+	arrActor := []Actor{}
 
-	plantillas.ExecuteTemplate(w, "inicio", nil)
+	for registros.Next() {
+		var id int
+		var nombre string
+		var edad int
+		err = registros.Scan(&id, &nombre, &edad)
+		if err != nil {
+			panic(err.Error())
+		}
+		actor.id = id
+		actor.nombre = nombre
+		actor.edad = edad
+
+		arrActor = append(arrActor, actor)
+
+	}
+	//fmt.Println(arrActor)
+
+	plantillas.ExecuteTemplate(w, "inicio", arrActor)
+
 }
 
-func Actor(w http.ResponseWriter, r *http.Request) {
+func Actores(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "Hola mundo.")
 	plantillas.ExecuteTemplate(w, "crear", nil)
+}
+
+func Insertar(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		nombre := r.FormValue("nombre")
+		edad := r.FormValue("edad")
+
+		conexionEstablecida := conexionBD()
+
+		insertarRegistros, err := conexionEstablecida.Prepare("INSERT INTO actores(nombre,edad) VALUES (?,?)")
+
+		if err != nil {
+			panic(err.Error())
+		}
+		insertarRegistros.Exec(nombre, edad)
+
+		http.Redirect(w, r, "/", 301)
+	}
+
 }

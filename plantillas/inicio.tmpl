@@ -13,12 +13,14 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>Jane</td>
-                <td>25</td>
-                <td>Editar | Borrrar</td>
-            </tr>
+        {{range.}}
+                <tr>
+                    <td>{{.id}}</td>
+                    <td>{{.nombre}}</td>
+                    <td>{{.edad}}</td>
+                    <td>Editar {{.id}} | Borrar {{.id}}</td>
+                </tr>
+        {{end}}
         </tbody>
     </table>
 
